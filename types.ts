@@ -16,6 +16,7 @@ export interface CallLog {
   duration: string;
   timestamp: string;
   sentiment: 'Positive' | 'Neutral' | 'Negative';
+  recordingUrl?: string;
 }
 
 export interface Agent {
@@ -25,6 +26,8 @@ export interface Agent {
   type: 'Sales' | 'Support' | 'Survey';
   status: 'Active' | 'Draft' | 'Paused';
   calls: number;
+  initialMessage?: string;
+  systemInstruction?: string;
 }
 
 export interface Campaign {
@@ -34,6 +37,11 @@ export interface Campaign {
   progress: number;
   totalLeads: number;
   startDate: string;
+  // New fields
+  frequency?: 'Daily' | 'Weekly';
+  scheduleTime?: string;
+  agentId?: string;
+  agentPromptOverride?: string;
 }
 
 export interface ApiKey {
@@ -42,6 +50,15 @@ export interface ApiKey {
   prefix: string;
   created: string;
   lastUsed: string;
+}
+
+export interface SipConfig {
+  host: string;
+  port: string;
+  username: string;
+  password: string;
+  transport: 'UDP' | 'TCP' | 'TLS' | 'WSS';
+  status: 'Unconfigured' | 'Registered' | 'Failed';
 }
 
 // Gemini Live Types

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { PhoneIcon, UsersIcon, BoltIcon, ChartBarIcon } from './ui/Icons';
 import { StatCardProps, CallLog } from '../types';
@@ -31,11 +31,47 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, isPositive, i
 );
 
 const DashboardHome: React.FC = () => {
+  const [selectedCall, setSelectedCall] = useState<CallLog | null>(null);
+
   const recentLogs: CallLog[] = [
-    { id: '1', agentName: 'Support Bot A', customerNumber: '+1 (555) 0123', status: 'Completed', duration: '3m 12s', timestamp: '2 mins ago', sentiment: 'Positive' },
-    { id: '2', agentName: 'Sales Agent X', customerNumber: '+1 (555) 0124', status: 'Active', duration: '1m 05s', timestamp: 'Now', sentiment: 'Neutral' },
-    { id: '3', agentName: 'Survey Bot', customerNumber: '+1 (555) 0125', status: 'Failed', duration: '0m 10s', timestamp: '15 mins ago', sentiment: 'Negative' },
-    { id: '4', agentName: 'Support Bot A', customerNumber: '+1 (555) 0126', status: 'Completed', duration: '5m 45s', timestamp: '1 hour ago', sentiment: 'Positive' },
+    { 
+      id: '1', 
+      agentName: 'Support Bot A', 
+      customerNumber: '+1 (555) 0123', 
+      status: 'Completed', 
+      duration: '3m 12s', 
+      timestamp: '2 mins ago', 
+      sentiment: 'Positive',
+      recordingUrl: 'https://actions.google.com/sounds/v1/science_fiction/scifi_laser_gun_shot.ogg' // Mock URL
+    },
+    { 
+      id: '2', 
+      agentName: 'Sales Agent X', 
+      customerNumber: '+1 (555) 0124', 
+      status: 'Active', 
+      duration: '1m 05s', 
+      timestamp: 'Now', 
+      sentiment: 'Neutral' 
+    },
+    { 
+      id: '3', 
+      agentName: 'Survey Bot', 
+      customerNumber: '+1 (555) 0125', 
+      status: 'Failed', 
+      duration: '0m 10s', 
+      timestamp: '15 mins ago', 
+      sentiment: 'Negative' 
+    },
+    { 
+      id: '4', 
+      agentName: 'Support Bot A', 
+      customerNumber: '+1 (555) 0126', 
+      status: 'Completed', 
+      duration: '5m 45s', 
+      timestamp: '1 hour ago', 
+      sentiment: 'Positive',
+      recordingUrl: 'https://actions.google.com/sounds/v1/science_fiction/scifi_laser_gun_shot.ogg'
+    },
   ];
 
   return (
@@ -51,7 +87,7 @@ const DashboardHome: React.FC = () => {
         <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
           <h3 className="text-lg font-bold text-slate-900 mb-4">Call Volume Trend</h3>
           <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
               <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorCalls" x1="0" y1="0" x2="0" y2="1">
@@ -73,7 +109,7 @@ const DashboardHome: React.FC = () => {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
           <h3 className="text-lg font-bold text-slate-900 mb-4">Call Outcomes</h3>
           <div className="h-72">
-             <ResponsiveContainer width="100%" height="100%">
+             <ResponsiveContainer width="100%" height="100%" minWidth={0}>
               <BarChart data={[
                 { name: 'Success', value: 65, fill: '#4ade80' },
                 { name: 'Voicemail', value: 25, fill: '#facc15' },
@@ -108,7 +144,11 @@ const DashboardHome: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {recentLogs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-50 transition-colors">
+                <tr 
+                    key={log.id} 
+                    className="hover:bg-slate-50 transition-colors cursor-pointer"
+                    onClick={() => setSelectedCall(log)}
+                >
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
                       ${log.status === 'Completed' ? 'bg-green-100 text-green-800' : 
@@ -133,6 +173,89 @@ const DashboardHome: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Call Details Modal */}
+      {selectedCall && (
+        <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 animate-[fadeIn_0.2s_ease-out]">
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-bold text-slate-900">Call Details</h3>
+                    <button onClick={() => setSelectedCall(null)} className="text-slate-400 hover:text-slate-600">
+                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Agent</p>
+                            <p className="font-semibold text-slate-900">{selectedCall.agentName}</p>
+                        </div>
+                        <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Customer</p>
+                            <p className="font-semibold text-slate-900 font-mono">{selectedCall.customerNumber}</p>
+                        </div>
+                        <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Status</p>
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium capitalize
+                                ${selectedCall.status === 'Completed' ? 'bg-green-100 text-green-800' : 
+                                  selectedCall.status === 'Active' ? 'bg-blue-100 text-blue-800' :
+                                  selectedCall.status === 'Failed' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                                {selectedCall.status}
+                            </span>
+                        </div>
+                        <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Duration</p>
+                            <p className="font-semibold text-slate-900">{selectedCall.duration}</p>
+                        </div>
+                    </div>
+
+                    <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                        <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Sentiment Analysis</p>
+                        <div className="flex items-center gap-2">
+                             <div className={`w-3 h-3 rounded-full 
+                                ${selectedCall.sentiment === 'Positive' ? 'bg-green-500' : 
+                                  selectedCall.sentiment === 'Negative' ? 'bg-red-500' : 'bg-slate-400'}`}></div>
+                             <span className="font-medium text-slate-700">{selectedCall.sentiment}</span>
+                        </div>
+                    </div>
+
+                    {selectedCall.recordingUrl ? (
+                        <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 mt-4">
+                            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Call Recording</p>
+                            <audio controls src={selectedCall.recordingUrl} className="w-full h-8 mb-4 rounded" />
+                            <a 
+                                href={selectedCall.recordingUrl} 
+                                download={`recording-${selectedCall.id}.mp3`}
+                                className="flex items-center justify-center gap-2 w-full py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                Download Recording
+                            </a>
+                        </div>
+                    ) : (
+                        <div className="text-center py-6 bg-slate-50 rounded-lg border border-slate-100 border-dashed text-slate-400 text-sm">
+                            No recording available for this call.
+                        </div>
+                    )}
+                </div>
+                
+                <div className="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+                     <button 
+                        onClick={() => setSelectedCall(null)}
+                        className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200 transition-colors"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+      )}
     </div>
   );
 };
