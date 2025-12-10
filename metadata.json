@@ -1,0 +1,7 @@
+{
+  "name": "Kredmint.ai",
+  "description": "Enterprise AI Voice Agent Platform with Real-time Gemini Live Integration.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
