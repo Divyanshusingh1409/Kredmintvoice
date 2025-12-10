@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Campaign, Agent } from '../types';
 
-const CampaignManager: React.FC = () => {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([
-    { id: '1', name: 'October Outreach', status: 'Running', progress: 45, totalLeads: 2000, startDate: '2023-10-01', frequency: 'Weekly', scheduleTime: '10:00' },
-    { id: '2', name: 'Churn Reactivation', status: 'Paused', progress: 12, totalLeads: 500, startDate: '2023-09-28', frequency: 'Daily', scheduleTime: '14:00' },
-    { id: '3', name: 'Webinar Invites', status: 'Completed', progress: 100, totalLeads: 1200, startDate: '2023-09-15', frequency: 'Daily', scheduleTime: '09:00' },
-  ]);
+interface CampaignManagerProps {
+  campaigns: Campaign[];
+  setCampaigns: React.Dispatch<React.SetStateAction<Campaign[]>>;
+  agents: Agent[];
+}
 
+const CampaignManager: React.FC<CampaignManagerProps> = ({ campaigns, setCampaigns, agents }) => {
   const [showModal, setShowModal] = useState(false);
   const [step, setStep] = useState<'form' | 'summary'>('form');
   
@@ -25,13 +25,6 @@ const CampaignManager: React.FC = () => {
     fileName: '',
     agentPromptOverride: ''
   });
-
-  // Mock Agents for dropdown
-  const agents: Agent[] = [
-    { id: '1', name: 'Inbound Support Bot', voice: 'Zephyr', type: 'Support', status: 'Active', calls: 0, systemInstruction: "Default support instructions..." },
-    { id: '2', name: 'Outbound Sales - Q4', voice: 'Puck', type: 'Sales', status: 'Active', calls: 0, systemInstruction: "Default sales instructions..." },
-    { id: '3', name: 'Customer Satisfaction Survey', voice: 'Kore', type: 'Survey', status: 'Active', calls: 0, systemInstruction: "Default survey instructions..." },
-  ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

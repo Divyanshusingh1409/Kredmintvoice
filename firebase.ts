@@ -1,7 +1,7 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 
-// TODO: Replace with your actual Firebase project configuration
+// Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCsPvnxt7end-uYGMYoo80-jRzFVbBkARw",
   authDomain: "studio-2363461873-9c4a1.firebaseapp.com",
@@ -11,16 +11,5 @@ const firebaseConfig = {
   appId: "1:515024797490:web:b1ca0e1c439adaa453212b"
 };
 
-let app;
-let auth;
-
-try {
-  // Initialize Firebase
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-} catch (error) {
-  console.warn("Firebase initialization failed. Check your config in firebase.ts");
-  console.warn(error);
-}
-
-export { auth };
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);

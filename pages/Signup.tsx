@@ -1,116 +1,111 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
+import { useNavigate, Link } from 'react-router-dom';
+import { Store, UserPlus, AlertCircle } from 'lucide-react';
 
-const Signup: React.FC = () => {
+export const Signup: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const auth = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!auth) return;
-
     if (password !== confirmPassword) {
-        return setError("Passwords do not match");
+      return setError('Passwords do not match');
     }
-
+    setError('');
+    setLoading(true);
     try {
-      setError('');
-      setLoading(true);
-      await auth.signup(email, password);
+      await createUserWithEmailAndPassword(auth, email, password);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Failed to create an account');
+      setError(err.message || 'Failed to create account');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
-        <div className="text-center">
-            <div className="w-12 h-12 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-2xl mx-auto">
-              K
-            </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-slate-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-sm text-slate-600">
-            Already have an account?{' '}
-            <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-              Sign in
-            </Link>
-          </p>
+    <div className="min-h-screen bg-stone-50 flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-stone-200">
+        <div className="bg-stone-900 p-8 text-center">
+           <div className="mx-auto bg-stone-800 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+            <Store className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-white">Create Account</h2>
+          <p className="text-stone-400 text-sm mt-2">Get started with Namaste Assistant</p>
         </div>
 
-        {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-100">
-                {error}
+        <div className="p-8">
+          {error && (
+            <div className="mb-6 bg-red-50 text-red-600 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
+              <AlertCircle className="w-4 h-4" />
+              {error}
             </div>
-        )}
+          )}
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email-address" className="sr-only">Email address</label>
+              <label className="block text-xs font-bold text-stone-500 uppercase mb-2">Email Address</label>
               <input
-                id="email-address"
-                name="email"
                 type="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-slate-300 placeholder-slate-500 text-slate-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                className="w-full px-4 py-3 rounded-xl bg-stone-50 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@company.com"
               />
             </div>
+            
             <div>
-              <label htmlFor="password" className="sr-only">Password</label>
+              <label className="block text-xs font-bold text-stone-500 uppercase mb-2">Password</label>
               <input
-                id="password"
-                name="password"
                 type="password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-slate-300 placeholder-slate-500 text-slate-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                className="w-full px-4 py-3 rounded-xl bg-stone-50 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
               />
             </div>
+
             <div>
-              <label htmlFor="confirm-password" className="sr-only">Confirm Password</label>
+              <label className="block text-xs font-bold text-stone-500 uppercase mb-2">Confirm Password</label>
               <input
-                id="confirm-password"
-                name="confirm-password"
                 type="password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-slate-300 placeholder-slate-500 text-slate-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Confirm Password"
+                className="w-full px-4 py-3 rounded-xl bg-stone-50 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
               />
             </div>
-          </div>
 
-          <div>
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors disabled:opacity-50"
+              className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              {loading ? 'Creating Account...' : 'Sign Up'}
+              {loading ? 'Creating Account...' : (
+                <>
+                  <UserPlus className="w-4 h-4" /> Sign Up
+                </>
+              )}
             </button>
+          </form>
+
+          <div className="mt-6 text-center text-sm text-stone-500">
+            Already have an account?{' '}
+            <Link to="/login" className="text-blue-600 font-semibold hover:underline">
+              Sign in
+            </Link>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
 };
-
-export default Signup;

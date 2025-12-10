@@ -1,40 +1,12 @@
 import React, { useState } from 'react';
 import { Agent } from '../types';
 
-const AgentManager: React.FC = () => {
-  const [agents, setAgents] = useState<Agent[]>([
-    { 
-      id: '1', 
-      name: 'Inbound Support Bot', 
-      voice: 'Zephyr', 
-      type: 'Support', 
-      status: 'Active', 
-      calls: 1240,
-      initialMessage: "Namaste! Welcome to Kredmint support. How can I assist you today?",
-      systemInstruction: "You are a helpful support agent for Kredmint..."
-    },
-    { 
-      id: '2', 
-      name: 'Outbound Sales - Q4', 
-      voice: 'Puck', 
-      type: 'Sales', 
-      status: 'Active', 
-      calls: 850,
-      initialMessage: "Hi, this is Alex from Kredmint. I noticed you started an application...",
-      systemInstruction: "You are a sales agent trying to convert leads..." 
-    },
-    { 
-      id: '3', 
-      name: 'Customer Satisfaction Survey', 
-      voice: 'Kore', 
-      type: 'Survey', 
-      status: 'Paused', 
-      calls: 320,
-      initialMessage: "Hello, do you have a moment to rate your recent experience?",
-      systemInstruction: "You are conducting a survey..."
-    },
-  ]);
+interface AgentManagerProps {
+  agents: Agent[];
+  setAgents: React.Dispatch<React.SetStateAction<Agent[]>>;
+}
 
+const AgentManager: React.FC<AgentManagerProps> = ({ agents, setAgents }) => {
   const [showModal, setShowModal] = useState(false);
   const [agentToDelete, setAgentToDelete] = useState<string | null>(null);
   

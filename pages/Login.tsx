@@ -1,118 +1,95 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
+import { useNavigate, Link } from 'react-router-dom';
+import { Store, LogIn, AlertCircle } from 'lucide-react';
 
-const Login: React.FC = () => {
+export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const auth = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!auth) return;
-
+    setError('');
+    setLoading(true);
     try {
-      setError('');
-      setLoading(true);
-      await auth.login(email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in');
+      setError(err.message || 'Failed to log in');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
-        <div className="text-center">
-            <div className="w-12 h-12 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-2xl mx-auto">
-              K
-            </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-slate-900">
-            Sign in to Kredmint.ai
-          </h2>
-          <p className="mt-2 text-sm text-slate-600">
-            Or{' '}
-            <Link to="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
-              start your 14-day free trial
-            </Link>
-          </p>
+    <div className="min-h-screen bg-stone-50 flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-stone-200">
+        <div className="bg-stone-900 p-8 text-center">
+          <div className="mx-auto bg-stone-800 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+            <Store className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-white">Welcome Back</h2>
+          <p className="text-stone-400 text-sm mt-2">Sign in to access your dashboard</p>
         </div>
-        
-        {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-100">
-                {error}
-            </div>
-        )}
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+        <div className="p-8">
+          {error && (
+            <div className="mb-6 bg-red-50 text-red-600 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
+              <AlertCircle className="w-4 h-4" />
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email-address" className="sr-only">Email address</label>
+              <label className="block text-xs font-bold text-stone-500 uppercase mb-2">Email Address</label>
               <input
-                id="email-address"
-                name="email"
                 type="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-slate-300 placeholder-slate-500 text-slate-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                className="w-full px-4 py-3 rounded-xl bg-stone-50 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@company.com"
               />
             </div>
+            
             <div>
-              <label htmlFor="password" className="sr-only">Password</label>
+              <label className="block text-xs font-bold text-stone-500 uppercase mb-2">Password</label>
               <input
-                id="password"
-                name="password"
                 type="password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-slate-300 placeholder-slate-500 text-slate-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                className="w-full px-4 py-3 rounded-xl bg-stone-50 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
               />
             </div>
-          </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 rounded"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-900">
-                Remember me
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-                Forgot your password?
-              </a>
-            </div>
-          </div>
-
-          <div>
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors disabled:opacity-50"
+              className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Signing in...' : (
+                <>
+                  <LogIn className="w-4 h-4" /> Sign In
+                </>
+              )}
             </button>
+          </form>
+
+          <div className="mt-6 text-center text-sm text-stone-500">
+            Don't have an account?{' '}
+            <Link to="/signup" className="text-blue-600 font-semibold hover:underline">
+              Create one
+            </Link>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
 };
-
-export default Login;
